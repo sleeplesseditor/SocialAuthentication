@@ -1,18 +1,25 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import io from 'socket.io-client';
+import OAuth from './components/OAuth';
+import { API_URL } from './config';
 import './App.css';
+
+const socket = io(API_URL);
+const providers = ['twitter', 'google', 'facebook', 'github'];
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div className={'wrapper'}>
+        <div className={'container'}>
+          {providers.map(provider => 
+            <OAuth 
+              provider={provider}
+              key={provider}
+              socket={socket}
+            />
+          )}
+        </div>
       </div>
     );
   }
