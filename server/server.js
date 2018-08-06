@@ -7,18 +7,27 @@ const passport = require('passport');
 const session = require('express-session');
 const cors = require('cors');
 const socketio = require('socket.io');
-const authRouter = reuire('./lib/auth.router');
+const authRouter = require('./lib/auth.router');
 const passportInit = require('./lib/passport.init');
 const { SESSION_SECRET, CLIENT_ORIGIN } = require('./config');
 
 const app = express();
+let server;
 
-const certOptions = {
-    key: fs.readFileSync(path.resolve('certs/server.key')),
-    cert: fs.readFileSync(path.resolve('certs/server.crt'))
+
+// If we are in production we are already running in https
+if (process.env.NODE_ENV === 'production') {
+    server = http.createServer(app)
+  }
+  // We are not in production so load up our certificates to be able to 
+  // run the server in https mode locally
+  else {
+    const certOptions = {
+      key: fs.readFileSync(path.resolve('certs/server.key')),
+      cert: fs.readFileSync(path.resolve('certs/server.crt'))
+    }
+    server = https.createServer(certOptions, app)
 }
-
-const server = https.createServer(certOptions, app);
 
 //Setup for passport and accept JSON objects
 app.use(express.json());
